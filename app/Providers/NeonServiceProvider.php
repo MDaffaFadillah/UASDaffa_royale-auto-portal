@@ -19,7 +19,11 @@ class NeonServiceProvider extends ServiceProvider
 
                     // Append Neon endpoint option to DSN if host contains neon.tech
                     $host = $config['host'] ?? '';
-                    if (str_contains($host, 'neon.tech')) {
+                    if (empty($host) && !empty($config['url'])) {
+                        $parsed = parse_url($config['url']);
+                        $host = $parsed['host'] ?? '';
+                    }
+                    if (str_contains($host, 'neon.tech') && !str_contains($dsn, 'endpoint=')) {
                         $endpointId = explode('.', $host)[0];
                         $dsn .= ";options='endpoint={$endpointId}'";
                     }
